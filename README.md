@@ -1,6 +1,6 @@
-# Zepto.js – a minimalist JavaScript framework
+# Zepto.js – a minimalist JavaScript library
 
-Zepto is a minimalist JavaScript framework for modern browsers with a
+Zepto is a minimalist JavaScript library for modern browsers with a
 largely jQuery-compatible API. If you use jQuery, you already know how to use Zepto.
 
 See [zeptojs.com](http://zeptojs.com) for an extended introduction, downloads
@@ -9,6 +9,8 @@ and documentation.
 Zepto.js is licensed under the terms of the MIT License.
 
 ## Building
+
+[![Build Status](https://secure.travis-ci.org/madrobby/zepto.png?branch=master)](http://travis-ci.org/madrobby/zepto)
 
 The official site offers a download of the default distribution of Zepto. This
 is good for starting out. However, at some point you might want to add some
@@ -43,15 +45,19 @@ The resulting files are:
 2. `dist/zepto.min.js`
 
 To include optional modules and remove default ones, use the `concat` task. In
-this example, "touch" and "fx" are removed, but "data" and "selector" are added:
+this example, "fx" is removed, but "data" and "selector" are added:
 
 ~~~
-$ rake concat[-touch:-fx:data:selector] dist
+$ rake concat[-fx:data:selector] dist
 ~~~
+
+<i>Zsh users may need to prepend `noglob` before that command because of special
+meaning of square brackets in the shell.</i>
 
 ## Zepto modules
 
-Zepto modules are individual files in the "src/" directory.
+Zepto modules are individual files in the "src/" directory. You can also list
+the available modules by running `rake modules`.
 
 <table>
 <thead><tr>
@@ -135,7 +141,7 @@ href="https://github.com/madrobby/zepto/blob/master/src/selector.js#files">selec
   </tr>
   <tr>
     <th><a href="https://github.com/madrobby/zepto/blob/master/src/touch.js#files">touch</a></th>
-    <td>✔</td>
+    <td></td>
     <td>Fires tap– and swipe–related events on touch devices</td>
   </tr>
   <tr>

@@ -71,6 +71,8 @@
   function empty() {}
 
   $.ajaxJSONP = function(options){
+    if (!('type' in options)) return $.ajax(options)
+
     var callbackName = 'jsonp' + (++jsonpID),
       script = document.createElement('script'),
       abort = function(){
@@ -192,14 +194,14 @@
       if (xhr.readyState == 4) {
         clearTimeout(abortTimeout)
         var result, error = false
-        if ((xhr.status >= 200 && xhr.status < 300) || (xhr.status == 0 && protocol == 'file:')) {
+        if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
           dataType = dataType || mimeToDataType(xhr.getResponseHeader('content-type'))
           result = xhr.responseText
 
           try {
             if (dataType == 'script')    (1,eval)(result)
             else if (dataType == 'xml')  result = xhr.responseXML
-            else if (dataType == 'json') result = blankRE.test(result) ? null : JSON.parse(result)
+            else if (dataType == 'json') result = blankRE.test(result) ? null : $.parseJSON(result)
           } catch (e) { error = e }
 
           if (error) ajaxError(error, 'parsererror', xhr, settings)
@@ -248,9 +250,9 @@
     if (parts.length > 1) url = parts[0], selector = parts[1]
     $.get(url, function(response){
       self.html(selector ?
-        $(document.createElement('div')).html(response.replace(rscript, "")).find(selector).html()
+        $('<div>').html(response.replace(rscript, "")).find(selector)
         : response)
-      success && success.call(self)
+      success && success.apply(self, arguments)
     })
     return this
   }
@@ -274,6 +276,6 @@
     var params = []
     params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) }
     serialize(params, obj, traditional)
-    return params.join('&').replace('%20', '+')
+    return params.join('&').replace(/%20/g, '+')
   }
 })(Zepto)
