@@ -136,7 +136,9 @@
     // Whether the request is to another domain
     crossDomain: false,
     // Default timeout
-    timeout: 0
+    timeout: 0,
+    // Whether data should be serialized to string
+    processData: true
   }
 
   function mimeToDataType(mime) {
@@ -152,7 +154,8 @@
 
   // serialize payload and append it to the URL for GET requests
   function serializeData(options) {
-    if (isObject(options.data)) options.data = $.param(options.data)
+    if (options.processData && isObject(options.data))
+      options.data = $.param(options.data, options.traditional)
     if (options.data && (!options.type || options.type.toUpperCase() == 'GET'))
       options.url = appendQuery(options.url, options.data)
   }
@@ -186,12 +189,13 @@
       if (mime.indexOf(',') > -1) mime = mime.split(',', 2)[0]
       xhr.overrideMimeType && xhr.overrideMimeType(mime)
     }
-    if (settings.contentType || (settings.data && settings.type.toUpperCase() != 'GET'))
+    if (settings.contentType || (settings.contentType !== false && settings.data && settings.type.toUpperCase() != 'GET'))
       baseHeaders['Content-Type'] = (settings.contentType || 'application/x-www-form-urlencoded')
     settings.headers = $.extend(baseHeaders, settings.headers || {})
 
     xhr.onreadystatechange = function(){
       if (xhr.readyState == 4) {
+        xhr.onreadystatechange = empty;
         clearTimeout(abortTimeout)
         var result, error = false
         if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && protocol == 'file:')) {
